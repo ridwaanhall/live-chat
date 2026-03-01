@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - Live Chat{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-xl-4">
+        <div class="card shadow-lg main-container">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0 text-center">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label text-muted small">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #404040; border-color: #555; color: #aaa;">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" name="username" id="id_username" class="form-control {% if form.errors.username %}is-invalid{% endif %}"
+                                   placeholder="Enter your username" value="{{ form.username.value|default:'' }}" required autofocus>
+                        </div>
+                        {% if form.errors.username %}
+                            <div class="text-danger small mt-1">{{ form.errors.username.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_password" class="form-label text-muted small">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #404040; border-color: #555; color: #aaa;">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input type="password" name="password" id="id_password" class="form-control {% if form.errors.password %}is-invalid{% endif %}"
+                                   placeholder="Enter your password" required>
+                        </div>
+                        {% if form.errors.password %}
+                            <div class="text-danger small mt-1">{{ form.errors.password.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small py-2">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                    </button>
+                </form>
+
+                <div class="text-center">
+                    <p class="text-muted small mb-0">
+                        Don't have an account?
+                        <a href="{% url 'register' %}" class="text-primary text-decoration-none fw-bold">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

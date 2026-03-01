@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - Live Chat{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-xl-4">
+        <div class="card shadow-lg main-container">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0 text-center">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label text-muted small">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #404040; border-color: #555; color: #aaa;">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            {{ form.username }}
+                        </div>
+                        {% if form.errors.username %}
+                            <div class="text-danger small mt-1">{{ form.errors.username.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="id_first_name" class="form-label text-muted small">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.errors.first_name %}
+                                <div class="text-danger small mt-1">{{ form.errors.first_name.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label for="id_last_name" class="form-label text-muted small">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.errors.last_name %}
+                                <div class="text-danger small mt-1">{{ form.errors.last_name.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label text-muted small">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #404040; border-color: #555; color: #aaa;">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            {{ form.password1 }}
+                        </div>
+                        {% if form.errors.password1 %}
+                            <div class="text-danger small mt-1">{{ form.errors.password1.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_password2" class="form-label text-muted small">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="background: #404040; border-color: #555; color: #aaa;">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+                            {{ form.password2 }}
+                        </div>
+                        {% if form.errors.password2 %}
+                            <div class="text-danger small mt-1">{{ form.errors.password2.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small py-2">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-person-plus me-1"></i>Create Account
+                    </button>
+                </form>
+
+                <div class="text-center">
+                    <p class="text-muted small mb-0">
+                        Already have an account?
+                        <a href="{% url 'login' %}" class="text-primary text-decoration-none fw-bold">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -29,6 +29,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", default=False, cast=bool)
 
+# Sign in with Google (set to True to use Google OAuth, False for Django auth)
+SIGNIN_GOOGLE = env("SIGNIN_GOOGLE", default=False, cast=bool)
+
 ALLOWED_HOSTS = []
 
 
@@ -42,17 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'allauth',
-    'allauth.account',
-    
-    # Optional -- requires install using `django-allauth[socialaccount]`.
-    'allauth.socialaccount',
-    
-    'allauth.socialaccount.providers.google',
-    
     # apps
     'base',  # Main application for the project
 ]
+
+if SIGNIN_GOOGLE:
+    INSTALLED_APPS += [
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.google',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,23 +65,26 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    # Add the account middleware:
-    "allauth.account.middleware.AccountMiddleware",
 ]
 
-# Provider specific settings
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        # For each OAuth based provider, either add a ``SocialApp``
-        # (``socialaccount`` app) containing the required client
-        # credentials, or list them here:
-        'APP': {
-            'client_id': env('GOOGLE_CLIENT_ID'),
-            'secret': env('GOOGLE_CLIENT_SECRET'),
-        },
+if SIGNIN_GOOGLE:
+    MIDDLEWARE.append("allauth.account.middleware.AccountMiddleware")
+
+# Provider specific settings (only when using Google sign-in)
+if SIGNIN_GOOGLE:
+    SOCIALACCOUNT_PROVIDERS = {
+        'google': {
+            'APP': {
+                'client_id': env('GOOGLE_CLIENT_ID'),
+                'secret': env('GOOGLE_CLIENT_SECRET'),
+            },
+        }
     }
-}
+
+    AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.ModelBackend',
+        'allauth.account.auth_backends.AuthenticationBackend',
+    ]
 
 ROOT_URLCONF = 'gglinks.urls'
 
@@ -92,7 +98,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.request',
+                'base.context_processors.auth_context',
             ],
         },
     },
@@ -153,9 +159,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SOCIALACCOUNT_LOGIN_ON_GET = True
-
 # Login/Logout redirect URLs
 LOGIN_REDIRECT_URL = '/'  # Redirect to home page after login
 LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
-ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # Allauth specific logout redirect
+
+if SIGNIN_GOOGLE:
+    SOCIALACCOUNT_LOGIN_ON_GET = True
+    ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # Allauth specific logout redirect
+else:
+    LOGIN_URL = '/login/'
