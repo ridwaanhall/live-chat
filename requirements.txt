@@ -3,7 +3,7 @@ certifi==2025.6.15
 charset-normalizer==3.4.2
 cryptography==46.0.5
 Django==5.2.11
-django-allauth==65.13.0
+django-allauth==65.14.1
 django-environ==0.12.0
 idna==3.10
 oauthlib==3.2.2
